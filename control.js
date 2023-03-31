@@ -182,7 +182,7 @@ const procesar = async () => {
   nombresMaterias = await obtenerNombresMaterias();
   const alumnos = await alumnosCambiados();
   console.log(alumnos.length);
-  bar1.start(alumnos.length, 0);
+  bar1.start(alumnos.length - 1, 0);
 
   for (const [i, { carrera, legajo, plan }] of alumnos.entries()) {
     bar1.update(i);

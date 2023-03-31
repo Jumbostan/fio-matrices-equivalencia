@@ -72,7 +72,7 @@ const procesar = async () => {
 
   const alumnos = await buscarAlumnos();
 
-  bar1.start(alumnos.length, 0);
+  bar1.start(alumnos.length - 1, 0);
 
   for (const [index, alumno] of alumnos.entries()) {
     bar1.update(index);
