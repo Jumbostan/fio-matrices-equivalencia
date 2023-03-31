@@ -7,6 +7,7 @@ let alumnosTotal = 'Carrera\tPlan\tLegajo\tAlumno\n';
 let alumnosAdeudan = 'Carrera\tPlan\tLegajo\tAlumno\tCantidad\n';
 let alumnosMaterias = 'Carrera\tPlan\tLegajo\tAlumno\tMateria\n';
 
+//alumnos reinscriptos que no esten en el plan 2023
 const buscarAlumnos = async () => {
   const sql = `
     SELECT al.carrera, al.legajo, p.apellido, p.nombres, al.plan, pl.version_actual
@@ -32,6 +33,7 @@ const buscarAlumnos = async () => {
   }
 };
 
+//lista de materias de 1er año que adeuda un alumno por carrera
 const materiasAdeuda1er = async (carrera, legajo, plan, version) => {
   const sql = `
     SELECT materia, nombre_materia
@@ -69,13 +71,13 @@ const procesar = async () => {
   const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
 
   const alumnos = await buscarAlumnos();
-  console.log(alumnos.length);
+
   bar1.start(alumnos.length, 0);
 
   for (const [index, alumno] of alumnos.entries()) {
     bar1.update(index);
 
-    if (index > 100) break;
+    // if (index > 100) break;
 
     const { carrera, legajo, apellido, nombres, plan, version_actual } = alumno;
     const materias = await materiasAdeuda1er(carrera, legajo, plan, version_actual);
