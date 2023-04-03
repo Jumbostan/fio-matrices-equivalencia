@@ -1,4 +1,5 @@
 require('dotenv').config();
+const fs = require('fs');
 const cliProgress = require('cli-progress');
 const { consultaDB } = require('./helpers/db');
 
@@ -150,13 +151,13 @@ const equivalencias = async (carrera, legajo, plan) => {
     const nomActActual = nombresMaterias.find((m) => m.materia === actAcual).nombre;
     // console.log(existeEquivalencia);
     const OK = !!existeEquivalencia ? 'OK' : '';
-    console.log(carrera, legajo, actividad, activ_extracur_nombre, actAcual, nomActActual, OK);
+    // console.log(carrera, legajo, actividad, activ_extracur_nombre, actAcual, nomActActual, OK);
 
     if (!existeEquivalencia) {
-      const equivFaltante = `${carrera} ${legajo.padEnd(
+      const equivFaltante = `${carrera}\t${legajo.padEnd(
         8,
         ' '
-      )} (${actividad}) ${activ_extracur_nombre} => (${actAcual}) ${nomActActual}`;
+      )}\t(${actividad}) ${activ_extracur_nombre} => (${actAcual}) ${nomActActual}\n`;
       equivFaltantes.push(equivFaltante);
     }
 
@@ -168,12 +169,15 @@ const equivalencias = async (carrera, legajo, plan) => {
 };
 
 const generarSalida = () => {
+  let salida = 'Carrera\tLegajo\tEquivalencia\n';
   for (const eq of matrizEquiv) {
-    console.log(eq);
+    // console.log(eq);
   }
   for (const equivFaltante of equivFaltantes) {
-    console.log(equivFaltante);
+    // console.log(equivFaltante);
+    salida += equivFaltante;
   }
+  fs.writeFileSync('equivalencias-faltantes.xls', salida);
 };
 
 const procesar = async () => {
@@ -187,7 +191,7 @@ const procesar = async () => {
   for (const [i, { carrera, legajo, plan }] of alumnos.entries()) {
     bar1.update(i);
 
-    if (i > 10) continue;
+    // if (i > 10) continue;
     const actividades = await equivalencias(carrera, legajo, plan);
   }
   bar1.stop();
