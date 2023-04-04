@@ -5,21 +5,25 @@ const { consultaDB } = require('./helpers/db');
 
 const defMatrizEquiv = {
   502: [
+    { anterior: 'X5.2', actual: '1001' },
     { anterior: 'X8.0', actual: '7020' },
     { anterior: 'X10.2', actual: '7013' },
   ],
   507: [
     { anterior: 'X5.1', actual: '2030' },
+    { anterior: 'X5.1', actual: '1001' },
     { anterior: 'X8.0', actual: '7020' },
     { anterior: 'X10.1', actual: '7012' },
   ],
   509: [
     { anterior: 'X5.4', actual: '5001' },
+    { anterior: 'X5.4', actual: '1001' },
     { anterior: 'X8.0', actual: '7025' },
     { anterior: 'X10.4', actual: '7015' },
   ],
   514: [
     { anterior: 'X5.3', actual: '4001' },
+    { anterior: 'X5.3', actual: '1001' },
     { anterior: 'X8.0', actual: '7020' },
     { anterior: 'X10.3', actual: '7014' },
   ],
@@ -29,6 +33,7 @@ const defMatrizEquiv = {
   ],
   525: [
     { anterior: 'X5.5', actual: '2001' },
+    { anterior: 'X5.5', actual: '1001' },
     { anterior: 'X8.0', actual: '7020' },
     { anterior: 'X10.5', actual: '7011' },
   ],
@@ -144,26 +149,31 @@ const equivalencias = async (carrera, legajo, plan) => {
   const historiaActual = await materiasActividades2023(carrera, legajo);
 
   for (const { carrera, legajo, plan, actividad, activ_extracur_nombre } of actividadesAnt) {
-    const actAcual = defMatrizEquiv[carrera].find((act) => act.anterior === actividad)?.actual;
-    if (!actAcual) continue;
-    const existeEquivalencia = historiaActual.find((ha) => ha.materia === actAcual);
+    // const actAcual = defMatrizEquiv[carrera].find((act) => act.anterior === actividad)?.actual;
+    const actActuales = defMatrizEquiv[carrera].filter((act) => act.anterior === actividad);
 
-    const nomActActual = nombresMaterias.find((m) => m.materia === actAcual).nombre;
-    // console.log(existeEquivalencia);
-    const OK = !!existeEquivalencia ? 'OK' : '';
-    // console.log(carrera, legajo, actividad, activ_extracur_nombre, actAcual, nomActActual, OK);
+    if (!actActuales.length === 0) continue;
+    for (const actividad of actActuales) {
+      const actAcual = actividad.actual;
+      const existeEquivalencia = historiaActual.find((ha) => ha.materia === actAcual);
 
-    if (!existeEquivalencia) {
-      const equivFaltante = `${carrera}\t${legajo.padEnd(
-        8,
-        ' '
-      )}\t(${actividad}) ${activ_extracur_nombre} => (${actAcual}) ${nomActActual}\n`;
-      equivFaltantes.push(equivFaltante);
-    }
+      const nomActActual = nombresMaterias.find((m) => m.materia === actAcual).nombre;
+      // console.log(existeEquivalencia);
+      const OK = !!existeEquivalencia ? 'OK' : '';
+      // console.log(carrera, legajo, actividad, activ_extracur_nombre, actAcual, nomActActual, OK);
 
-    const strEquiv = `${carrera} (${actividad}) ${activ_extracur_nombre} => (${actAcual}) ${nomActActual}`;
-    if (!matrizEquiv.includes(strEquiv)) {
-      matrizEquiv.push(strEquiv);
+      if (!existeEquivalencia) {
+        const equivFaltante = `${carrera}\t${legajo.padEnd(
+          8,
+          ' '
+        )}\t(${actividad}) ${activ_extracur_nombre} => (${actAcual}) ${nomActActual}\n`;
+        equivFaltantes.push(equivFaltante);
+      }
+
+      const strEquiv = `${carrera} (${actividad}) ${activ_extracur_nombre} => (${actAcual}) ${nomActActual}`;
+      if (!matrizEquiv.includes(strEquiv)) {
+        matrizEquiv.push(strEquiv);
+      }
     }
   }
 };
