@@ -153,8 +153,8 @@ const equivalencias = async (carrera, legajo, plan) => {
     const actActuales = defMatrizEquiv[carrera].filter((act) => act.anterior === actividad);
 
     if (!actActuales.length === 0) continue;
-    for (const actividad of actActuales) {
-      const actAcual = actividad.actual;
+    for (const aa of actActuales) {
+      const actAcual = aa.actual;
       const existeEquivalencia = historiaActual.find((ha) => ha.materia === actAcual);
 
       const nomActActual = nombresMaterias.find((m) => m.materia === actAcual).nombre;
